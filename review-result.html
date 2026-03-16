@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Results - AI Code Reviewer</title>
+    <link rel="stylesheet" href="styles/main.css">
+    
+    <!-- Prism for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+
+    <style>
+        .score-card {
+            background: linear-gradient(135deg, rgba(35, 134, 54, 0.1) 0%, rgba(35, 134, 54, 0) 100%);
+            border: 1px solid var(--success-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+        .score-val {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--success-color);
+        }
+        
+        /* Highlighting container logic */
+        pre[class*="language-"] {
+            margin: 0;
+            border-radius: 0;
+            background: transparent;
+            font-size: 14px;
+        }
+        .code-viewer {
+            background-color: #141414; /* Prism Twilight Match */
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                <h2>AI Code Reviewer</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </a>
+                <a href="new-review.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    New Review
+                </a>
+                <a href="history.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Review History
+                </a>
+                <a href="analytics.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                    Analytics
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Settings
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <header class="top-navbar">
+                <div class="user-profile">
+                    <span style="font-size: 14px; font-weight: 500;">Developer_User</span>
+                    <div class="avatar">
+                        <svg viewBox="0 0 32 32" style="fill: var(--text-secondary);"><circle cx="16" cy="10" r="6"/><path d="M16 18c-7.732 0-14 4.477-14 10v2h28v-2c0-5.523-6.268-10-14-10z"/></svg>
+                    </div>
+                </div>
+            </header>
+
+            <div class="main-content">
+                <div class="flex justify-between align-center mb-4">
+                    <h1>Analysis Results: <span style="font-weight: normal; color: var(--text-secondary);">userAppController.js</span></h1>
+                    <button class="btn btn-secondary">Download Report</button>
+                </div>
+
+                <div class="score-card">
+                    <div>
+                        <h2 style="margin-bottom: 0.5rem;">Overall Code Quality Score</h2>
+                        <p style="color: var(--text-secondary);">Your code structure is solid, but there's room for optimization and securing data.</p>
+                    </div>
+                    <div class="score-val">7.8 / 10</div>
+                </div>
+
+                <div class="review-layout">
+                    <!-- Code Panel -->
+                    <div class="code-viewer">
+                        <div class="pane-header flex justify-between align-center">
+                            <span>userAppController.js</span>
+                            <span class="badge badge-low">JavaScript</span>
+                        </div>
+                        <div class="pane-content" style="padding: 0; position: relative;">
+                            <pre class="line-numbers"><code class="language-javascript">
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+
+// Get user profile
+exports.getProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        
+        // Return sensitive data like password hash unintentionally maybe?
+        res.status(200).json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+// Update user details
+exports.updateProfile = async (req, res) => {
+    const { name, email } = req.body;
+
+    // Bad performance due to not using bulk update
+    try {
+        let user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        user.name = name;
+        user.email = email;
+        
+        await user.save();
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Review Comments Panel -->
+                    <div class="review-comments">
+                        <div class="pane-header">
+                            AI Feedback <span class="badge badge-medium ml-2">2 Issues</span>
+                        </div>
+                        <div class="pane-content">
+                            <!-- Comment 1 -->
+                            <div class="comment-card">
+                                <div class="comment-card-header">
+                                    <span>Line 10</span>
+                                    <span class="badge badge-high">High</span>
+                                </div>
+                                <strong>Data Exposure Risk</strong>
+                                <p class="comment-desc mt-2">Returning the full user object may expose sensitive keys like password hashes, recovery tokens, or internal IDs to the client.</p>
+                                <div class="suggestion-box">
+                                    <strong>Suggestion:</strong><br>
+                                    <code>res.status(200).json({ id: user.id, name: user.name, email: user.email });</code>
+                                    <br>Or use a DTO/serializer to exclude sensitive fields.
+                                </div>
+                            </div>
+
+                            <!-- Comment 2 -->
+                            <div class="comment-card">
+                                <div class="comment-card-header">
+                                    <span>Line 26</span>
+                                    <span class="badge badge-low">Low</span>
+                                </div>
+                                <strong>Performance Optimization</strong>
+                                <p class="comment-desc mt-2">Performing a <code>findById</code> followed immediately by <code>save()</code> makes two database trips. Use `findOneAndUpdate` to reduce latency.</p>
+                                <div class="suggestion-box">
+                                    <strong>Suggestion:</strong><br>
+                                    <code>const updated = await User.findByIdAndUpdate(req.user.id, { name, email }, { new: true });</code>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const reviewId = urlParams.get('id');
+
+            if (!reviewId) {
+                alert('No review ID found');
+                return;
+            }
+
+                try {
+                const reviewData = await App.apiCall(`/review/${reviewId}`);
+
+                // Update basic info
+                if (document.querySelector('.score-val')) {
+                    document.querySelector('.score-val').innerHTML = reviewData.score ? `${reviewData.score.score.toFixed(1)} <span style="font-size: 1rem; color: var(--text-secondary); font-weight: normal;">/ 10</span>` : 'Processing...';
+                }
+                if (document.querySelector('h1 span')) {
+                    document.querySelector('h1 span').textContent = reviewData.repo_url || 'Unknown Target';
+                }
+                if (document.querySelector('.code-viewer .pane-header span:first-child')) {
+                    document.querySelector('.code-viewer .pane-header span:first-child').textContent = (reviewData.repo_url || '').split('/').pop() || 'Code Review';
+                }
+                
+                // Construct total issues count text safely
+                const crit_count = reviewData.score ? reviewData.score.critical_issues : 0;
+                const total_count = reviewData.score ? reviewData.score.total_issues : 0;
+                if (document.querySelector('.review-comments .pane-header .badge')) {
+                    document.querySelector('.review-comments .pane-header .badge').textContent = `${total_count} Issues`;
+                }
+
+                // Render code snippet
+                const codeBlock = document.querySelector('code.language-javascript');
+                if (codeBlock) {
+                    if (reviewData.commit_hash) {
+                        codeBlock.textContent = reviewData.commit_hash;
+                        if (window.Prism) {
+                            Prism.highlightElement(codeBlock);
+                        }
+                    } else {
+                        codeBlock.textContent = "// Source code is unavailable for this specific type of remote Repository review.\n// Please refer directly to Github using the AI line-number observations to inspect your codebase.\n";
+                    }
+                }
+
+                // Render specific comments
+                const commentsContainer = document.querySelector('.review-comments .pane-content');
+                if (commentsContainer) {
+                    commentsContainer.innerHTML = ''; 
+                }
+
+                if (reviewData.results && reviewData.results.length > 0 && commentsContainer) {
+                    reviewData.results.forEach(issue => {
+                        const commentDiv = document.createElement('div');
+                        commentDiv.className = 'comment-card';
+                        
+                        // Map severity to CSS class
+                        let badgeClass = 'badge-low';
+                        if (issue.severity === 'high' || issue.severity === 'critical') badgeClass = 'badge-high';
+                        if (issue.severity === 'medium') badgeClass = 'badge-medium';
+
+                        commentDiv.innerHTML = `
+                            <div class="comment-header">
+                                <span class="badge ${badgeClass}">${issue.severity} Issue</span>
+                                <span class="text-sm text-secondary">Line ${issue.line_number || 'N/A'} - ${issue.file_name}</span>
+                            </div>
+                            <h4 style="margin: 0.5rem 0;">${issue.issue_type || 'Observation'}</h4>
+                            <p class="text-sm">${issue.description}</p>
+                            ${issue.suggestion ? `
+                            <div style="background-color: var(--bg-hover); padding: 0.75rem; border-radius: var(--border-radius); margin-top: 0.75rem;">
+                                <span class="text-sm" style="font-weight: 500; display: block; margin-bottom: 0.25rem;">✨ AI Suggestion:</span>
+                                <code class="text-sm" style="color: var(--success-color);">${issue.suggestion}</code>
+                            </div>` : ''}
+                        `;
+                        commentsContainer.appendChild(commentDiv);
+                    });
+                } else {
+                    commentsContainer.innerHTML = '<p class="text-secondary">No specific issues found yet. Still analyzing or code is clean!</p>';
+                }
+
+            } catch (err) {
+                console.error("Failed to load review details:", err);
+                alert("Could not load review: " + err.message);
+            }
+        });
+    </script>
+</body>
+</html>

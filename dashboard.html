@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Code Reviewer</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            background-color: var(--bg-primary);
+        }
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        .icon-blue { color: var(--accent-color); border: 1px solid var(--accent-color); }
+        .icon-red { color: var(--danger-color); border: 1px solid var(--danger-color); }
+        .icon-green { color: var(--success-color); border: 1px solid var(--success-color); }
+        .icon-yellow { color: var(--warning-color); border: 1px solid var(--warning-color); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                <h2>AI Code Reviewer</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </a>
+                <a href="new-review.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    New Review
+                </a>
+                <a href="history.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Review History
+                </a>
+                <a href="analytics.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                    Analytics
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Settings
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item logout-btn" style="color: var(--danger-color);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <header class="top-navbar">
+                <div class="user-profile">
+                    <span style="font-size: 14px; font-weight: 500;">Developer_User</span>
+                    <div class="avatar">
+                        <svg viewBox="0 0 32 32" style="fill: var(--text-secondary);"><circle cx="16" cy="10" r="6"/><path d="M16 18c-7.732 0-14 4.477-14 10v2h28v-2c0-5.523-6.268-10-14-10z"/></svg>
+                    </div>
+                </div>
+            </header>
+
+            <div class="main-content">
+                <div class="flex justify-between align-center mb-4">
+                    <h1>Dashboard Overview</h1>
+                    <a href="new-review.html" class="btn btn-primary">Start New Review</a>
+                </div>
+
+                <!-- Metrics Widgets -->
+                <div class="dashboard-grid">
+                    <div class="card stat-card">
+                        <div class="stat-icon icon-blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <div class="stat-widget">
+                            <span class="stat-title">Total Reviews Completed</span>
+                            <span class="stat-value" id="stat-total-reviews">0</span>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon icon-red">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        </div>
+                        <div class="stat-widget">
+                            <span class="stat-title">Critical Issues Found</span>
+                            <span class="stat-value" id="stat-critical-issues">--</span>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon icon-green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                        <div class="stat-widget">
+                            <span class="stat-title">Average Quality Score</span>
+                            <span class="stat-value" id="stat-avg-score">-- / 10</span>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon icon-yellow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        </div>
+                        <div class="stat-widget">
+                            <span class="stat-title">Recent Activity</span>
+                            <span class="stat-value" id="stat-recent-activity">Just now</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Reviews Table -->
+                <div class="card">
+                    <h2 class="mb-3" style="font-size: 1.1rem; color: var(--text-primary); margin-top: 0;">Recent Reviews</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Date</th>
+                                    <th>Issues Found</th>
+                                    <th>Score</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let pollTimeout = null;
+        
+        async function fetchDashboardData() {
+            try {
+                const history = await App.apiCall('/review/history');
+                const tbody = document.querySelector('tbody');
+                
+                if (history && history.length > 0) {
+                    tbody.innerHTML = ''; // Clear mocks
+                    
+                    document.getElementById('stat-total-reviews').textContent = history.length;
+
+                    let hasPending = false;
+                    history.forEach(review => {
+                        const date = new Date(review.created_at).toLocaleDateString();
+                        
+                        const tr = document.createElement('tr');
+                        
+                        let scoreHtml = `<strong style="color: var(--warning-color);">Processing...</strong>`;
+                        let statusHtml = `<span class="badge badge-medium">Wait</span>`;
+                        let issuesHtml = `<span>-</span>`;
+                        
+                        // We set 5s refresh rate if there is at least one processing job
+                        if (!review.score_data) {
+                            hasPending = true;
+                        } else {
+                            scoreHtml = `<strong style="color: var(--success-color);">${review.score_data.score.toFixed(1)}</strong>`;
+                            statusHtml = `<span class="badge badge-low">Completed</span>`;
+                            const issuesCount = review.score_data.total_issues;
+                            if (issuesCount === 0) {
+                                issuesHtml = `<span class="badge badge-low">Clean</span>`;
+                            } else if (review.score_data.critical_issues > 0) {
+                                issuesHtml = `<span class="badge badge-critical">${issuesCount} Issues</span>`;
+                            } else {
+                                issuesHtml = `<span class="badge badge-medium">${issuesCount} Issues</span>`;
+                            }
+                        }
+
+                        tr.innerHTML = `
+                            <td>
+                                <div class="flex align-center gap-2">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                                    <a href="review-result.html?id=${review.id}">${review.repo_url || 'Unknown Project'}</a>
+                                </div>
+                            </td>
+                            <td>${date}</td>
+                            <td>${issuesHtml}</td>
+                            <td>${scoreHtml}</td>
+                            <td>${statusHtml}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-secondary)">No reviews yet. Start a new one!</td></tr>';
+                }
+                
+                if (hasPending) {
+                    pollTimeout = setTimeout(fetchDashboardData, 3000);
+                }
+            } catch (err) {
+                console.error("Failed to load dashboard history:", err);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDashboardData();
+        });
+    </script>
+</body>
+</html>
